@@ -326,14 +326,15 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .brands-hdr{font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#9a8ab0;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
 .brands-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
 .bc{border:2px solid #1a0a2e;border-radius:9px;overflow:hidden;box-shadow:2px 2px 0 #1a0a2e;position:relative;}
-.bh{display:flex;align-items:center;gap:9px;padding:9px 12px 14px;border-bottom:2px solid #1a0a2e;position:relative;overflow:hidden;}
+.bh{display:flex;align-items:center;gap:9px;padding:9px 12px 10px;border-bottom:2px solid #1a0a2e;position:relative;overflow:hidden;flex-wrap:wrap;}
+.bh .bpb{width:100%;}
 .be{font-size:24px;flex-shrink:0;}
 .bn{font-family:'Righteous',sans-serif;font-size:17px;color:#000;}
 .bt{font-size:11px;font-weight:700;text-transform:uppercase;color:#333;}
 .bb{padding:7px 10px;}
 .bpl{font-size:11px;font-weight:800;text-transform:uppercase;color:#000;margin-bottom:1px;}
 .bpc{font-family:'Righteous',sans-serif;font-size:20px;color:#000;cursor:pointer;}
-.bpb{height:8px;background:rgba(0,0,0,0.1);border-radius:100px;overflow:hidden;margin:8px 12px 0;position:relative;}
+.bpb{height:8px;background:rgba(0,0,0,0.1);border-radius:100px;overflow:hidden;margin:6px 0 0;position:relative;}
 .bpf{height:100%;border-radius:100px;transition:width 0.4s;}
 .brc{font-size:12px;color:#555;}
 .brd{font-size:14px;font-weight:700;color:#000;margin-bottom:4px;}
@@ -1798,8 +1799,8 @@ function buildRetainerHTML(){
           </div>
           <div onclick="event.stopPropagation();bumpRCount('${r.id}','posts')" title="Add 1 post" style="width:24px;height:24px;background:rgba(0,0,0,0.06);border:1.5px solid rgba(0,0,0,0.15);border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:700;color:#333;transition:all 0.15s;">▲</div>
         </div>
+        <div class="bpb"><div class="bpf" style="width:${pct}%;background:${clrs[r.color]||'#c4a0ff'}"></div></div>
       </div>
-      <div class="bpb"><div class="bpf" style="width:${pct}%;background:${clrs[r.color]||'#c4a0ff'}"></div></div>
       <div class="bb">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
           <div>
