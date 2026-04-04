@@ -1889,16 +1889,48 @@ setWcalLoc(appState.wcalLoc||'dashboard');
 // Monthly goals use onclick directly
 
 
+function dedupeWins() {
+  try {
+    var wins = JSON.parse(localStorage.getItem('cmd_wins') || '[]');
+    var seen = {};
+    var unique = [];
+    wins.forEach(function(w) {
+      var key = w.t + '|' + w.src + '|' + (w.weekMs || '');
+      if (!seen[key]) { seen[key] = true; unique.push(w); }
+    });
+    if (unique.length !== wins.length) {
+      localStorage.setItem('cmd_wins', JSON.stringify(unique));
+    }
+    return unique;
+  } catch(e) { return []; }
+}
+function editWin(i) {
+  var wins = dedupeWins();
+  var w = wins[i]; if (!w) return;
+  var newText = prompt('Edit win:', w.t);
+  if (newText !== null && newText.trim()) {
+    wins[i].t = newText.trim();
+    localStorage.setItem('cmd_wins', JSON.stringify(wins));
+    buildWinsModal();
+  }
+}
+function deleteWin(i) {
+  if (!confirm('Delete this win?')) return;
+  var wins = dedupeWins();
+  wins.splice(i, 1);
+  localStorage.setItem('cmd_wins', JSON.stringify(wins));
+  buildWinsModal();
+}
 function buildWinsModal() {
   var el = document.getElementById('wins-list'); if (!el) return;
   try {
-    var wins = JSON.parse(localStorage.getItem('cmd_wins') || '[]');
+    var wins = dedupeWins();
     if (wins.length === 0) {
       el.innerHTML = '<div style="font-size:12px;color:#9a8ab0;padding:10px 0">Complete goals to see wins here.</div>';
       return;
     }
-    el.innerHTML = wins.map(function(w) {
-      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px dashed #ffffff1a;">' +
+    el.innerHTML = wins.map(function(w, i) {
+      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px dashed #ffffff1a;cursor:context-menu;" oncontextmenu="event.preventDefault();winCtx(event,' + i + ')">' +
         '<div style="font-size:14px;">🏆</div>' +
         '<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#e0d0ff;">' + w.t + '</div>' +
         '<div style="font-size:10px;color:#9a8ab0;margin-top:2px;">' + w.src + ' · ' + w.date + '</div></div>' +
@@ -1907,6 +1939,21 @@ function buildWinsModal() {
   } catch(e) {
     el.innerHTML = '<div style="font-size:12px;color:#9a8ab0;padding:10px 0">Complete goals to see wins here.</div>';
   }
+}
+function winCtx(e, i) {
+  var menu = document.getElementById('win-ctx');
+  if (!menu) {
+    menu = document.createElement('div');
+    menu.id = 'win-ctx';
+    menu.style.cssText = 'position:fixed;z-index:9999;background:#1a0a2e;border:1.5px solid #ffffff33;border-radius:7px;padding:4px 0;display:none;min-width:120px;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
+    document.body.appendChild(menu);
+    document.addEventListener('click', function() { menu.style.display = 'none'; });
+  }
+  menu.innerHTML = '<div onclick="editWin(' + i + ')" style="padding:6px 14px;font-size:12px;color:#e0d0ff;cursor:pointer;font-family:DM Sans,sans-serif;" onmouseover="this.style.background=\'#ffffff14\'" onmouseout="this.style.background=\'transparent\'">✏️ Edit</div>' +
+    '<div onclick="deleteWin(' + i + ')" style="padding:6px 14px;font-size:12px;color:#ff6b9d;cursor:pointer;font-family:DM Sans,sans-serif;" onmouseover="this.style.background=\'#ffffff14\'" onmouseout="this.style.background=\'transparent\'">🗑 Delete</div>';
+  menu.style.display = 'block';
+  menu.style.left = e.clientX + 'px';
+  menu.style.top = e.clientY + 'px';
 }
 // ── SCHEDULE EDITOR ──
 function openSchedEditor() {
