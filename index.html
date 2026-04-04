@@ -371,6 +371,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 
 .ret-task{display:flex;align-items:flex-start;gap:5px;padding:3px 0;font-size:15px;font-weight:600;color:#000;border-bottom:1px dotted rgba(0,0,0,0.08);cursor:pointer;user-select:none;}
 .ret-task:last-child{border-bottom:none;}
+.ret-task.imp-row{background:var(--yellow);border-radius:3px;padding:3px 4px;}
 .ret-task.done .ret-task-txt{text-decoration:line-through;text-decoration-thickness:var(--strike-thick);}
 .ret-task.scrapped .ret-task-txt{text-decoration:line-through wavy;text-decoration-thickness:var(--zigzag-thick);text-decoration-color:rgba(0,0,0,0.65);}
 .ret-task-check{width:11px;height:11px;border:1.5px solid rgba(0,0,0,0.25);border-radius:50%;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:900;transition:all 0.15s;}
@@ -1797,11 +1798,11 @@ function buildRetainerHTML(){
     // Tasks for this retainer
     const tasks = r.tasks||[];
     const taskHtml = tasks.length
-      ? tasks.map((t,ti)=>`<div class="ret-task ${t.done?'done':t.scrapped?'scrapped':''}" style="position:relative;padding-right:16px;"
+      ? tasks.map((t,ti)=>`<div class="ret-task ${t.done?'done':t.scrapped?'scrapped':''} ${t.imp?'imp-row':''}" style="position:relative;padding-right:16px;"
           onclick="cycleRetTask('${r.id}',${ti})"
           oncontextmenu="retCtxMenu(event,'${r.id}',${ti})">
           <div class="ret-task-check ${t.done?'done':t.scrapped?'scrapped':''}"></div>
-          <span class="ret-task-txt" style="${t.imp?'color:#b8960a;':''}">${t.t}</span>
+          <span class="ret-task-txt">${t.t}</span>
           <span class="gi-star ${t.imp?'active':''}" onclick="event.stopPropagation();toggleRetImp('${r.id}',${ti})" style="position:absolute;right:1px;top:50%;transform:translateY(-50%);font-size:12px;cursor:pointer;">★</span>
         </div>`).join('')
       : '<div style="font-size:10px;color:#aaa;padding:3px 0">No tasks yet</div>';
