@@ -52,7 +52,10 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .goal-bubble.done{border-color:#ffffff33;}
 .goal-bubble.scrapped{opacity:1;}
 
-.gb-star{font-size:12px;color:var(--yellow);}
+.gb-star{position:absolute;top:4px;right:6px;font-size:11px;color:transparent;cursor:pointer;transition:color 0.15s;user-select:none;z-index:2;}
+.goal-bubble:hover .gb-star{color:rgba(255,255,255,0.25);}
+.gb-star.active{color:#f9e000 !important;}
+.goal-bubble.imp{background:rgba(249,224,0,0.25);border-color:#f9e000;}
 .bubble-x{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;}
 .bubble-zz{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
 .goal-bubble.done .bubble-x{display:flex;}
@@ -237,16 +240,29 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .mg-tw{flex:1;position:relative;}
 .mg-txt{font-size:12px;font-weight:500;color:#e0d0ff;line-height:1.4;display:block;}
 .mg-row.scrapped .zz{display:none;}
-.mg-row.scrapped .mg-txt{text-decoration:line-through wavy;text-decoration-color:rgba(255,255,255,0.65);text-decoration-thickness:var(--zigzag-thick);}
-.mg-row.done-this .mg-txt,.mg-row.done-prev .mg-txt{text-decoration:line-through;text-decoration-color:#e0d0ff;text-decoration-thickness:var(--strike-thick);}
+.mg-row.scrapped .mg-txt{text-decoration:line-through wavy;text-decoration-color:rgba(255,255,255,0.65);text-decoration-thickness:var(--zigzag-thick);opacity:0.5;}
+.mg-row.done-this .mg-txt,.mg-row.done-prev .mg-txt{text-decoration:line-through;text-decoration-color:rgba(255,255,255,0.8);text-decoration-thickness:var(--strike-thick);opacity:0.6;}
 .item-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed #ffffff18;font-size:12px;color:#e0d0ff;cursor:pointer;user-select:none;}
 .item-row:last-child{border-bottom:none;}
 .item-circle{width:14px;height:14px;border:1.5px solid #ffffff44;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:900;transition:all 0.15s;color:transparent;}
 .item-row.done .item-circle{background:#fff;border-color:#fff;color:transparent;}
 .item-row.scrapped .item-circle{background:transparent;border-color:#ffffff55;color:#ffffff88;font-size:8px;}
 .item-row.scrapped .item-circle::after{content:"✕";}
-.item-row.done span{text-decoration:line-through;text-decoration-color:#e0d0ff;text-decoration-thickness:var(--strike-thick);}
-.item-row.scrapped span{text-decoration:line-through wavy;text-decoration-color:rgba(255,255,255,0.65);text-decoration-thickness:var(--zigzag-thick);}
+.item-row.done span{text-decoration:line-through;text-decoration-color:rgba(255,255,255,0.8);text-decoration-thickness:var(--strike-thick);opacity:0.6;}
+.item-row.scrapped span{text-decoration:line-through wavy;text-decoration-color:rgba(255,255,255,0.65);text-decoration-thickness:var(--zigzag-thick);opacity:0.5;}
+.mg-star,.item-star{font-size:11px;color:transparent;cursor:pointer;transition:color 0.15s;user-select:none;flex-shrink:0;padding-left:4px;}
+.mg-row:hover .mg-star,.item-row:hover .item-star{color:rgba(255,255,255,0.25);}
+.mg-star.active,.item-star.active{color:#f9e000 !important;}
+.mg-row.imp{border:1.5px solid #f9e000;border-radius:5px;padding:4px 6px;margin-bottom:2px;}
+.item-row.imp{border:1.5px solid #f9e000;border-radius:5px;padding:4px 6px;margin-bottom:2px;}
+.drag-handle{font-size:11px;color:rgba(255,255,255,0.2);cursor:grab;flex-shrink:0;user-select:none;padding-left:4px;}
+.drag-handle:hover{color:rgba(255,255,255,0.5);}
+.mg-modal-star{font-size:11px;color:transparent;cursor:pointer;transition:color 0.15s;user-select:none;flex-shrink:0;padding-left:4px;}
+.mg-modal-row:hover .mg-modal-star{color:rgba(255,255,255,0.25);}
+.mg-modal-star.active{color:#f9e000 !important;}
+.mg-modal-row.imp{background:rgba(249,224,0,0.15);border-radius:4px;padding:6px 8px;}
+.mg-modal-handle{font-size:11px;color:rgba(255,255,255,0.2);cursor:grab;flex-shrink:0;padding-left:4px;user-select:none;}
+.mg-modal-handle:hover{color:rgba(255,255,255,0.5);}
 .notes-ta{width:100%;background:#ffffff11;border:1px solid #ffffff22;border-radius:7px;padding:8px;font-family:'DM Sans',sans-serif;font-size:12px;color:#e0d0ff;outline:none;resize:vertical;min-height:90px;line-height:1.5;}
 .notes-ta::placeholder{color:#ffffff44;}
 .notes-ta:focus{border-color:#00c44f;}
@@ -275,7 +291,8 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .mg-modal-check.scrapped{background:#ffffff22;border-color:#ffffff55;}
 .mg-modal-check.scrapped::after{content:"✕";font-size:9px;color:#ffffff88;}
 .mg-modal-txt{flex:1;position:relative;}
-.mg-modal-row.scrapped .mg-modal-txt{text-decoration:line-through wavy;text-decoration-color:rgba(255,255,255,0.65);text-decoration-thickness:var(--zigzag-thick);}
+.mg-modal-row.scrapped .mg-modal-txt{text-decoration:line-through wavy;text-decoration-color:rgba(255,255,255,0.65);text-decoration-thickness:var(--zigzag-thick);opacity:0.5;}
+.mg-modal-row.done-prev .mg-modal-txt{opacity:0.6;}
 .history-divider{font-size:9px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#7a6a9a;margin:14px 0 10px;padding-top:12px;border-top:1px solid #ffffff11;}
 .history-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .history-month{background:#ffffff08;border:1px solid #ffffff14;border-radius:8px;padding:9px;}
@@ -318,8 +335,8 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .bpc{font-family:'Righteous',sans-serif;font-size:20px;color:#000;cursor:pointer;}
 .bpb{height:4px;background:rgba(0,0,0,0.15);border-radius:0;overflow:hidden;position:absolute;bottom:0;left:0;right:0;}
 .bpf{height:100%;border-radius:100px;transition:width 0.4s;}
-.brc{font-size:14px;color:#555;}
-.brd{font-size:16px;font-weight:700;color:#000;margin-bottom:4px;}
+.brc{font-size:12px;color:#555;}
+.brd{font-size:14px;font-weight:700;color:#000;margin-bottom:4px;}
 .bc-drop{position:absolute;top:5px;right:8px;background:none;border:none;font-size:10px;color:rgba(0,0,0,0.25);cursor:pointer;font-family:'DM Sans',sans-serif;}
 .bc-drop:hover{color:#ff6b9d;}
 .bc.soursop .bh{background:#dcffdc;}.bc.soursop .bpf{background:#00c44f;}
@@ -938,6 +955,8 @@ document.addEventListener('click', closeCtx);
 function addWin(text, source) {
   try {
     var wins = JSON.parse(localStorage.getItem('cmd_wins') || '[]');
+    var isDupe = wins.some(function(w) { return w.t === text && w.src === source && w.weekMs === currentMs; });
+    if (isDupe) return;
     wins.unshift({ t: text, src: source, date: new Date().toLocaleDateString(), weekMs: currentMs });
     localStorage.setItem('cmd_wins', JSON.stringify(wins));
   } catch(e) {}
@@ -955,8 +974,8 @@ function buildWeeklyGoals() {
     } else if (g.scrapped) {
       overlay = '<div class="bubble-zz"><svg viewBox="0 0 100 100" style="position:absolute;inset:-10px 0;width:100%;height:calc(100% + 20px)"><polyline points="5,65 12,30 19,68 26,28 33,70 40,25 47,72 54,22 61,75 68,25 75,72 82,28 89,68 95,32" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="4" stroke-linecap="round"/></svg></div>';
     }
-    return '<div class="goal-bubble ' + cls + '" onclick="cycleWG(' + i + ')" oncontextmenu="deleteWG(event,' + i + ')">' +
-      '<span class="gb-star">★</span>' +
+    return '<div class="goal-bubble ' + cls + (g.imp?' imp':'') + '" onclick="cycleWG(' + i + ')" oncontextmenu="deleteWG(event,' + i + ')">' +
+      '<span class="gb-star ' + (g.imp?'active':'') + '" onclick="event.stopPropagation();toggleWGImp(' + i + ')">★</span>' +
       '<span>' + (g.t || '') + '</span>' +
       overlay +
     '</div>';
@@ -991,6 +1010,14 @@ function deleteWG(e, i) {
   buildWeeklyGoals();
 }
 
+function toggleWGImp(i) {
+  var all = loadData();
+  if (!all[currentMs] || !all[currentMs].weekGoals) return;
+  var g = all[currentMs].weekGoals[i]; if (!g) return;
+  g.imp = !g.imp;
+  try { localStorage.setItem('cmd_data', JSON.stringify(all)); } catch(e) {}
+  buildWeeklyGoals();
+}
 // ── IMPORTANCE TOGGLE ──
 function toggleImp(dow, sec, id) {
   var all = loadData();
@@ -1143,9 +1170,10 @@ function buildTodayOverview() {
       var textStyle = g.state === 'done' ? 'text-decoration:line-through;text-decoration-thickness:var(--strike-thick);' : g.state === 'scrapped' ? 'text-decoration:line-through wavy;text-decoration-color:#1a0a2e;text-decoration-thickness:var(--zigzag-thick);' : '';
       var circleCls = g.state === 'done' ? 'background:#00c44f;border-color:#00c44f;color:#fff;' : g.state === 'scrapped' ? 'background:rgba(0,0,0,0.08);' : '';
       var content = g.state === 'done' ? '✓' : g.state === 'scrapped' ? '✕' : '';
-      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px dashed rgba(0,0,0,0.1);cursor:pointer;" onclick="cycleMGIndex(' + gY + ',' + gM + ',' + i + ')">' +
+      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px dashed rgba(0,0,0,0.1);cursor:pointer;' + (g.imp?'background:rgba(249,224,0,0.2);border-radius:4px;padding:6px 8px;':'') + '" onclick="cycleMGIndex(' + gY + ',' + gM + ',' + i + ')">' +
         '<div style="width:18px;height:18px;border:2px solid rgba(0,0,0,0.2);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;margin-top:1px;' + circleCls + '">' + content + '</div>' +
         '<span style="font-size:14px;font-weight:600;color:#1a0a2e;flex:1;' + textStyle + '">' + g.t + '</span>' +
+        '<span class="mg-star ' + (g.imp?'active':'') + '" onclick="event.stopPropagation();toggleFutMGImp(' + gY + ',' + gM + ',' + i + ')" style="color:' + (g.imp?'#f9e000':'transparent') + ';font-size:11px;cursor:pointer;">★</span>' +
       '</div>';
     }).join('');
     
@@ -1366,13 +1394,32 @@ function buildSidebarMG() {
   var goals = getCurrentMonthGoals();
   el.innerHTML = goals.map(function(g, i) {
     var cls = g.state === 'done' ? (g.weekMs === currentMs ? 'done-this' : 'done-prev') : g.state === 'scrapped' ? 'scrapped' : '';
-    return '<div class="mg-row ' + cls + '" data-mgidx="' + i + '" onclick="cycleMG(this)">' +
+    return '<div class="mg-row ' + cls + (g.imp?' imp':'') + '" data-mgidx="' + i + '" onclick="cycleMG(this)" draggable="true" ondragstart="mgDragStart(event,' + i + ')" ondragover="mgDragOver(event)" ondrop="mgDrop(event,' + i + ')">' +
       '<div class="mg-circle ' + cls + '"></div>' +
-      '<div class="mg-tw"><span class="mg-txt">' + g.t + '</span></div>' +
+      '<div class="mg-tw" style="flex:1"><span class="mg-txt">' + g.t + '</span></div>' +
+      '<span class="mg-star ' + (g.imp?'active':'') + '" onclick="event.stopPropagation();toggleMGImp(' + i + ')">★</span>' +
+      '<span class="drag-handle">≡</span>' +
     '</div>';
   }).join('') || '<div style="font-size:11px;color:#9a8ab0;padding:6px 0;font-style:italic">Manifest your goals!</div>';
 }
 function syncMGAll() { buildSidebarMG(); }
+function toggleMGImp(i) {
+  var n = new Date();
+  var goals = getCurrentMonthGoals();
+  var g = goals[i]; if (!g) return;
+  g.imp = !g.imp;
+  saveMonthGoals(n.getFullYear(), n.getMonth(), goals);
+  buildSidebarMG();
+  buildTodayOverview();
+  if (typeof buildMGModal === 'function') buildMGModal();
+}
+function toggleFutMGImp(y, m, i) {
+  var goals = getMonthGoalsFor(y, m);
+  var g = goals[i]; if (!g) return;
+  g.imp = !g.imp;
+  saveMonthGoals(y, m, goals);
+  buildTodayOverview();
+}
 
 // Monthly goals history
 function loadMGHistory() {
@@ -1424,9 +1471,11 @@ function buildMGModal(){
   listEl.innerHTML = goals.map(function(g, i) {
     var cls = g.state === 'done' ? 'done-prev' : g.state === 'scrapped' ? 'scrapped' : '';
     var textStyle = g.state === 'done' ? 'text-decoration:line-through;text-decoration-thickness:var(--strike-thick);' : g.state === 'scrapped' ? 'text-decoration:line-through wavy;text-decoration-color:#fff;text-decoration-thickness:var(--zigzag-thick);' : '';
-    return '<div class="mg-modal-row" data-mgidx="' + i + '" onclick="cycleMG(this)" draggable="true" ondragstart="mgDragStart(event,' + i + ')" ondragover="mgDragOver(event)" ondrop="mgDrop(event,' + i + ')">' +
+    return '<div class="mg-modal-row ' + (g.imp?'imp':'') + '" data-mgidx="' + i + '" onclick="cycleMG(this)" draggable="true" ondragstart="mgDragStart(event,' + i + ')" ondragover="mgDragOver(event)" ondrop="mgDrop(event,' + i + ')">' +
       '<div class="mg-modal-check ' + cls + '"></div>' +
       '<div class="mg-modal-txt" style="' + textStyle + '">' + g.t + '</div>' +
+      '<span class="mg-modal-star ' + (g.imp?'active':'') + '" onclick="event.stopPropagation();toggleMGImp(' + i + ')">★</span>' +
+      '<span class="mg-modal-handle">≡</span>' +
     '</div>';
   }).join('') || '<div style="font-size:12px;color:#9a8ab0;padding:8px 0;font-style:italic">Manifest your goals!</div>';
   
@@ -1479,6 +1528,26 @@ function cycleItem(i) {
   buildItemList();
 }
 
+function toggleItemImp(i) {
+  var items = loadItems();
+  var item = items[i]; if (!item) return;
+  item.imp = !item.imp;
+  saveItems(items);
+  buildItemList();
+}
+var itemDragIdx = null;
+function itemDragStart(e, i) { itemDragIdx = i; e.dataTransfer.effectAllowed = 'move'; }
+function itemDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+function itemDrop(e, targetIdx) {
+  e.preventDefault();
+  if (itemDragIdx === null || itemDragIdx === targetIdx) return;
+  var items = loadItems();
+  var item = items.splice(itemDragIdx, 1)[0];
+  items.splice(targetIdx, 0, item);
+  saveItems(items);
+  itemDragIdx = null;
+  buildItemList();
+}
 function addToItemHistory(text, type) {
   var history = loadItemHistory();
   history.unshift({ t: text, date: new Date().toLocaleDateString(), type: type });
@@ -1519,9 +1588,11 @@ function buildItemList() {
   var el = document.getElementById('item-list'); if (!el) return;
   el.innerHTML = items.map(function(item, i) {
     var cls = item.done ? 'done' : item.scrapped ? 'scrapped' : '';
-    return '<div class="item-row ' + cls + '" onclick="cycleItem(' + i + ')">' +
+    return '<div class="item-row ' + cls + (item.imp?' imp':'') + '" onclick="cycleItem(' + i + ')" draggable="true" ondragstart="itemDragStart(event,' + i + ')" ondragover="itemDragOver(event)" ondrop="itemDrop(event,' + i + ')">' +
       '<div class="item-circle"></div>' +
-      '<span>' + item.t + '</span>' +
+      '<span style="flex:1">' + item.t + '</span>' +
+      '<span class="item-star ' + (item.imp?'active':'') + '" onclick="event.stopPropagation();toggleItemImp(' + i + ')">★</span>' +
+      '<span class="drag-handle">≡</span>' +
     '</div>';
   }).join('');
 }
@@ -1601,6 +1672,8 @@ function saveBC(bc){ try{localStorage.setItem('cmd_bc',JSON.stringify(bc));}catc
 function getRCount(r,type){ const c=loadBC(),n=new Date(); return c[r.id+'_'+n.getFullYear()+'_'+n.getMonth()+'_'+type]||0; }
 function setRCount(r,type,val){ const c=loadBC(),n=new Date(); c[r.id+'_'+n.getFullYear()+'_'+n.getMonth()+'_'+type]=val; saveBC(c); }
 function promptRCount(id,type){ const r=retainers.find(x=>x.id===id); if(!r) return; const v=prompt(r.name+' '+type+':',getRCount(r,type)); if(v!==null&&!isNaN(+v)){setRCount(r,type,Math.max(0,+v));buildCenterApps();} }
+function bumpRCount(id,type){ const r=retainers.find(x=>x.id===id); if(!r) return; setRCount(r,type,getRCount(r,type)+1); buildCenterApps(); }
+function resetRCount(id,type){ const r=retainers.find(x=>x.id===id); if(!r) return; setRCount(r,type,0); buildCenterApps(); if(document.getElementById('modal-retainer-editor')?.classList.contains('open'))buildRetainerEditor(); }
 function dropRetainer(id){ if(!confirm('Drop this retainer?')) return; retainers=retainers.filter(r=>r.id!==id); saveRetainers(); buildCenterApps(); if(document.getElementById('modal-retainer-editor')?.classList.contains('open'))buildRetainerEditor(); }
 function addRetainer(){ const name=prompt('Retainer name:'); if(!name) return; retainers.push({id:'r'+Date.now(),emoji:'📦',name,type:'TikTok Shop',renewal:new Date().toISOString().split('T')[0],goal:30,fee:0,commission:'10%',color:'nmn'}); saveRetainers(); buildCenterApps(); buildRetainerEditor(); }
 
@@ -1636,8 +1709,11 @@ function buildRetainerHTML(){
       <div class="bh">
         <div class="be">${r.emoji}</div>
         <div><div class="bn">${r.name}</div><div class="bt">${r.type}</div></div>
-        <div style="margin-left:auto;text-align:right;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(0,0,0,0.5);line-height:1.2;" onclick="promptRCount('${r.id}','posts')" title="Click to update">
-          ${countLabel}<br><span style="font-family:'Righteous',sans-serif;font-size:20px;color:#000;letter-spacing:0">${total}</span><span style="font-size:12px;color:#333">/${r.goal}</span>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:6px;">
+          <div style="text-align:right;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(0,0,0,0.5);line-height:1.2;" onclick="promptRCount('${r.id}','posts')" title="Click to edit">
+            ${countLabel}<br><span style="font-family:'Righteous',sans-serif;font-size:20px;color:#000;letter-spacing:0">${total}</span><span style="font-size:12px;color:#333">/${r.goal}</span>
+          </div>
+          <div onclick="event.stopPropagation();bumpRCount('${r.id}','posts')" title="Add 1 post" style="width:24px;height:24px;background:rgba(0,0,0,0.06);border:1.5px solid rgba(0,0,0,0.15);border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:700;color:#333;transition:all 0.15s;">▲</div>
         </div>
         <div class="bpb"><div class="bpf" style="width:${pct}%;background:${clrs[r.color]||'#c4a0ff'}"></div></div>
       </div>
@@ -1649,7 +1725,7 @@ function buildRetainerHTML(){
           <div style="font-size:10px;color:#555">💰 ${r.fee?'$'+r.fee+'/mo + ':''} ${r.commission}</div>
         </div>
         ${riw?`<div style="margin-bottom:6px;padding:3px 6px;background:rgba(249,224,0,0.2);border-radius:4px;font-size:10px;font-weight:700;color:#333">↻ Renewing this week</div>`:''}
-        <div style="font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#666;margin-bottom:4px">Tasks</div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#666;margin-bottom:4px">Tasks</div>
         <div class="ret-tasks" id="ret-tasks-${r.id}">${taskHtml}</div>
         <div style="display:flex;align-items:center;gap:4px;margin-top:5px;">
           <button class="add-task-btn" onclick="this.parentElement.querySelector('.add-task-input').classList.toggle('visible');if(this.parentElement.querySelector('.add-task-input').classList.contains('visible'))this.parentElement.querySelector('.add-task-input').focus()" title="Add task">+</button>
@@ -1678,7 +1754,7 @@ function buildRetainerHTML(){
 
 function buildRetainerEditor(){
   const el=document.getElementById('ret-editor-list'); if(!el) return;
-  el.innerHTML=retainers.map((r,i)=>`<div style="background:#ffffff08;border:1px solid #ffffff14;border-radius:9px;padding:12px;margin-bottom:10px;"><div style="display:flex;align-items:center;gap:9px;margin-bottom:10px;"><span style="font-size:18px">${r.emoji}</span><span style="font-size:14px;font-weight:700;color:#fff">${r.name}</span><button onclick="dropRetainer('${r.id}')" style="margin-left:auto;background:rgba(255,107,157,0.15);border:1px solid #ff6b9d;border-radius:5px;padding:3px 9px;color:#ff6b9d;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;">Drop</button></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div class="ret-field"><label>Emoji</label><input value="${r.emoji}" oninput="retainers[${i}].emoji=this.value;saveRetainers()"></div><div class="ret-field"><label>Name</label><input value="${r.name}" oninput="retainers[${i}].name=this.value;saveRetainers()"></div><div class="ret-field"><label>Type</label><select onchange="retainers[${i}].type=this.value;saveRetainers()"><option ${r.type==='AI Avatar'?'selected':''}>AI Avatar</option><option ${r.type==='TikTok Shop'?'selected':''}>TikTok Shop</option><option ${r.type==='Other'?'selected':''}>Other</option></select></div><div class="ret-field"><label>Goal</label><input type="number" value="${r.goal}" oninput="retainers[${i}].goal=+this.value||30;saveRetainers()"></div><div class="ret-field"><label>Renewal</label><input type="date" value="${r.renewal}" oninput="retainers[${i}].renewal=this.value;saveRetainers()"></div><div class="ret-field"><label>Retainer $</label><input type="number" value="${r.fee||0}" oninput="retainers[${i}].fee=+this.value||0;saveRetainers()"></div><div class="ret-field"><label>Commission</label><input value="${r.commission}" oninput="retainers[${i}].commission=this.value;saveRetainers()"></div><div class="ret-field"><label>Track Lives</label><select onchange="retainers[${i}].trackLives=this.value==='yes';saveRetainers()"><option value="no" ${!r.trackLives?'selected':''}>No</option><option value="yes" ${r.trackLives?'selected':''}>Yes</option></select></div></div></div>`).join('');
+  el.innerHTML=retainers.map((r,i)=>`<div style="background:#ffffff08;border:1px solid #ffffff14;border-radius:9px;padding:12px;margin-bottom:10px;"><div style="display:flex;align-items:center;gap:9px;margin-bottom:10px;"><span style="font-size:18px">${r.emoji}</span><span style="font-size:14px;font-weight:700;color:#fff">${r.name}</span><button onclick="dropRetainer('${r.id}')" style="margin-left:auto;background:rgba(255,107,157,0.15);border:1px solid #ff6b9d;border-radius:5px;padding:3px 9px;color:#ff6b9d;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;">Drop</button></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div class="ret-field"><label>Emoji</label><input value="${r.emoji}" oninput="retainers[${i}].emoji=this.value;saveRetainers()"></div><div class="ret-field"><label>Name</label><input value="${r.name}" oninput="retainers[${i}].name=this.value;saveRetainers()"></div><div class="ret-field"><label>Type</label><select onchange="retainers[${i}].type=this.value;saveRetainers()"><option ${r.type==='AI Avatar'?'selected':''}>AI Avatar</option><option ${r.type==='TikTok Shop'?'selected':''}>TikTok Shop</option><option ${r.type==='Other'?'selected':''}>Other</option></select></div><div class="ret-field"><label>Goal</label><input type="number" value="${r.goal}" oninput="retainers[${i}].goal=+this.value||30;saveRetainers()"></div><div class="ret-field"><label>Renewal</label><input type="date" value="${r.renewal}" oninput="retainers[${i}].renewal=this.value;saveRetainers()"></div><div class="ret-field"><label>Retainer $</label><input type="number" value="${r.fee||0}" oninput="retainers[${i}].fee=+this.value||0;saveRetainers()"></div><div class="ret-field"><label>Commission</label><input value="${r.commission}" oninput="retainers[${i}].commission=this.value;saveRetainers()"></div><div class="ret-field"><label>Track Lives</label><select onchange="retainers[${i}].trackLives=this.value==='yes';saveRetainers()"><option value="no" ${!r.trackLives?'selected':''}>No</option><option value="yes" ${r.trackLives?'selected':''}>Yes</option></select></div></div><div style="display:flex;align-items:center;gap:8px;margin-top:8px;"><div class="ret-field" style="flex:1;margin:0"><label>Posts</label><input type="number" value="${getRCount(r,'posts')}" min="0" onchange="setRCount(retainers[${i}],'posts',Math.max(0,+this.value));buildCenterApps()" style="width:100%"></div><button onclick="resetRCount('${r.id}','posts');this.closest('[style*=background]').querySelector('input[type=number]').value=0" style="background:rgba(255,107,157,0.15);border:1px solid #ff6b9d;border-radius:5px;padding:5px 12px;color:#ff6b9d;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;margin-top:14px;">Reset</button></div></div>`).join('');
 }
 
 // ── WOTD ──
