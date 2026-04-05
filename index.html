@@ -2001,48 +2001,82 @@ function buildRetainerEditor(){
 // ── WOTD ──
 const WOTD=[{word:'頑張る',reading:'ganbaru',meaning:"To do one's best",sentence:'毎日頑張ってコンテンツを作っています。',en:'I work hard creating content every day.'},{word:'成功',reading:'seikou',meaning:'Success',sentence:'成功への道は努力から始まります。',en:'The path to success begins with effort.'},{word:'夢',reading:'yume',meaning:'Dream',sentence:'大きな夢を持ち、毎日前に進む。',en:'Hold big dreams and move forward every day.'},{word:'継続',reading:'keizoku',meaning:'Consistency',sentence:'継続は力なり。',en:'Consistency is power.'},{word:'自由',reading:'jiyuu',meaning:'Freedom',sentence:'経済的自由が目標です。',en:'Financial freedom is the goal.'},{word:'創造',reading:'souzou',meaning:'Creativity',sentence:'創造力がコンテンツの鍵です。',en:'Creativity is the key to great content.'},{word:'挑戦',reading:'chousen',meaning:'Challenge',sentence:'新しい挑戦を恐れないでください。',en:"Don't be afraid of new challenges."}];
 // ── JOURNAL APP ──
-var JOURNAL_PROMPTS = [
-  'How was your day?',
-  'What went well today?',
-  'What are you grateful for?',
-  'What did you learn today?',
-  'How are you feeling right now?',
-  'What was the highlight of your day?',
-  'What could you improve tomorrow?'
-];
-function getJournalKey(y, m, d) { return 'cmd_journal_' + y + '-' + (m+1) + '-' + d; }
+function getJournalKey(y, m, d) { return 'cmd_journal_' + y + '_' + m + '_' + d; }
 function loadJournalEntry(y, m, d) {
   try { return localStorage.getItem(getJournalKey(y, m, d)) || ''; } catch(e) { return ''; }
 }
 function saveJournalEntry(y, m, d, text) {
   try { localStorage.setItem(getJournalKey(y, m, d), text); } catch(e) {}
 }
+function getJournalDayInfo(sunday, dow) {
+  var date = new Date(sunday);
+  date.setDate(sunday.getDate() + dow);
+  return { y: date.getFullYear(), m: date.getMonth(), day: date.getDate() };
+}
 function buildJournalHTML() {
   var sunday = new Date(currentMs);
   var days = getWeekDays(sunday);
   var todayDow = now.getDay();
   var isCurrent = currentMs === todayMs;
-  var prompt = JOURNAL_PROMPTS[new Date().getDate() % JOURNAL_PROMPTS.length];
+  var isPast = currentMs < todayMs;
+  var DAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
+  if (isCurrent) {
+    // Current week: show only today's entry full size + "This Week" button
+    var info = getJournalDayInfo(sunday, todayDow);
+    var text = loadJournalEntry(info.y, info.m, info.day);
+    var dateLabel = (info.m+1) + '/' + info.day;
+
+    // Build mini previews for the popup
+    var previews = days.map(function(d) {
+      var di = getJournalDayInfo(sunday, d.dow);
+      var t = loadJournalEntry(di.y, di.m, di.day);
+      var isToday = d.dow === todayDow;
+      var preview = t ? (t.length > 60 ? t.substring(0, 60) + '...' : t) : '<span style="color:#9a8ab0;font-style:italic">No entry</span>';
+      return '<div style="padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.06);' + (isToday ? 'background:rgba(0,207,255,0.08);margin:0 -10px;padding:8px 10px;border-radius:4px;' : '') + '">' +
+        '<div style="font-size:11px;font-weight:700;color:' + (isToday ? '#00cfff' : '#1a0a2e') + ';margin-bottom:2px;">' + DAY_FULL[d.dow] + ' ' + (di.m+1) + '/' + di.day + (isToday ? ' (Today)' : '') + '</div>' +
+        '<div style="font-size:12px;color:#333;line-height:1.4;">' + (typeof preview === 'string' ? preview.replace(/</g,'&lt;').replace(/&lt;span/g,'<span').replace(/&lt;\/span&gt;/g,'</span>') : preview) + '</div>' +
+      '</div>';
+    }).join('');
+
+    return '<div style="max-width:700px;margin:10px auto;border:2px solid #1a0a2e;border-radius:9px;overflow:hidden;box-shadow:2px 2px 0 #1a0a2e;">' +
+      '<div style="background:#1a0a2e;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">' +
+        '<span style="font-family:Righteous,sans-serif;font-size:14px;color:#fff;letter-spacing:2px;">📓 JOURNAL</span>' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<span style="font-size:10px;color:#9a8ab0;">' + DAY_FULL[todayDow] + ' ' + dateLabel + '</span>' +
+          '<button onclick="document.getElementById(\'journal-week-popup\').style.display=document.getElementById(\'journal-week-popup\').style.display===\'block\'?\'none\':\'block\'" style="background:#ffffff14;border:1px solid #ffffff33;border-radius:5px;padding:3px 10px;font-size:10px;font-weight:700;color:#e0d0ff;cursor:pointer;font-family:DM Sans,sans-serif;">This Week</button>' +
+        '</div>' +
+      '</div>' +
+      '<div style="background:rgba(255,255,255,0.35);position:relative;">' +
+        '<div id="journal-week-popup" style="display:none;position:absolute;top:0;right:0;width:300px;background:#fff;border:2px solid #1a0a2e;border-radius:8px;box-shadow:4px 4px 0 rgba(0,0,0,0.15);padding:12px;z-index:10;max-height:350px;overflow-y:auto;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+            '<span style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#9a8ab0;">This Week</span>' +
+            '<span onclick="document.getElementById(\'journal-week-popup\').style.display=\'none\'" style="cursor:pointer;font-size:14px;color:#9a8ab0;">✕</span>' +
+          '</div>' +
+          previews +
+        '</div>' +
+        '<div style="padding:14px;">' +
+          '<textarea placeholder="How was your day?" oninput="saveJournalEntry(' + info.y + ',' + info.m + ',' + info.day + ',this.value)" style="width:100%;min-height:140px;border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;padding:12px;font-family:DM Sans,sans-serif;font-size:14px;color:#1a0a2e;outline:none;resize:vertical;line-height:1.6;background:#f8f4ff;">' + text.replace(/</g,'&lt;') + '</textarea>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  // Past or future weeks: show all 7 days stacked, all expanded, collapsible
   var entries = days.map(function(d) {
-    var date = new Date(sunday);
-    date.setDate(sunday.getDate() + d.dow);
-    var y = date.getFullYear(), m = date.getMonth(), day = date.getDate();
-    var text = loadJournalEntry(y, m, day);
-    var isToday = isCurrent && d.dow === todayDow;
-    var expanded = isToday;
-    var dateLabel = (m+1) + '/' + day;
-    var dayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.dow];
+    var di = getJournalDayInfo(sunday, d.dow);
+    var t = loadJournalEntry(di.y, di.m, di.day);
+    var dateLabel = (di.m+1) + '/' + di.day;
 
     return '<div style="border-bottom:1px solid rgba(0,0,0,0.06);">' +
-      '<div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\';this.querySelector(\'.j-arrow\').textContent=this.nextElementSibling.style.display===\'none\'?\'▸\':\'▾\'" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;user-select:none;">' +
-        '<span class="j-arrow" style="font-size:10px;color:#9a8ab0;width:10px;">' + (expanded ? '▾' : '▸') + '</span>' +
-        '<span style="font-size:12px;font-weight:700;color:' + (isToday ? '#00cfff' : '#1a0a2e') + ';">' + dayName + '</span>' +
+      '<div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\';this.querySelector(\'.j-arrow\').textContent=this.nextElementSibling.style.display===\'none\'?\'▸\':\'▾\'" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;user-select:none;background:rgba(0,0,0,0.02);">' +
+        '<span class="j-arrow" style="font-size:10px;color:#9a8ab0;width:10px;">▾</span>' +
+        '<span style="font-size:12px;font-weight:700;color:#1a0a2e;">' + DAY_FULL[d.dow] + '</span>' +
         '<span style="font-size:10px;color:#9a8ab0;">' + dateLabel + '</span>' +
-        (text ? '<span style="margin-left:auto;font-size:9px;color:#00c44f;font-weight:700;">✓</span>' : '') +
+        (t ? '<span style="margin-left:auto;font-size:9px;color:#00c44f;font-weight:700;">✓</span>' : '') +
       '</div>' +
-      '<div style="display:' + (expanded ? 'block' : 'none') + ';padding:0 12px 10px;">' +
-        '<textarea placeholder="' + prompt + '" oninput="saveJournalEntry(' + y + ',' + m + ',' + day + ',this.value)" style="width:100%;min-height:80px;border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;padding:10px;font-family:DM Sans,sans-serif;font-size:13px;color:#1a0a2e;outline:none;resize:vertical;line-height:1.5;background:#f8f4ff;">' + text.replace(/</g,'&lt;') + '</textarea>' +
+      '<div style="display:block;padding:0 12px 10px;">' +
+        '<textarea placeholder="Write about ' + DAY_FULL[d.dow].toLowerCase() + '..." oninput="saveJournalEntry(' + di.y + ',' + di.m + ',' + di.day + ',this.value)" style="width:100%;min-height:80px;border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;padding:10px;font-family:DM Sans,sans-serif;font-size:13px;color:#1a0a2e;outline:none;resize:vertical;line-height:1.5;background:#f8f4ff;">' + t.replace(/</g,'&lt;') + '</textarea>' +
       '</div>' +
     '</div>';
   }).join('');
