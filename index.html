@@ -2108,6 +2108,18 @@ function deleteScheduleBlock(id) {
   saveScheduleBlocks(blocks);
   buildCenterApps();
 }
+function moveScheduleBlock(id, dir) {
+  var blocks = getScheduleBlocks();
+  var idx = blocks.findIndex(function(b) { return b.id === id; });
+  if (idx < 0) return;
+  var newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= blocks.length) return;
+  var tmp = blocks[idx];
+  blocks[idx] = blocks[newIdx];
+  blocks[newIdx] = tmp;
+  saveScheduleBlocks(blocks);
+  buildCenterApps();
+}
 var scheduleView = 'blocks';
 function setScheduleView(v) { scheduleView = v; buildCenterApps(); }
 
@@ -2138,13 +2150,13 @@ function buildBlocksGrid() {
   var todayDow = now.getDay();
   var isCurrent = currentMs === todayMs;
 
-  var headerCols = days.map(function(d) {
+  var dayHeaders = days.map(function(d) {
     var isToday = isCurrent && d.dow === todayDow;
-    return '<div style="text-align:center;padding:6px 2px;font-size:10px;font-weight:700;color:' + (isToday ? '#00cfff' : '#fff') + ';border-left:1px solid #ffffff15;">' +
+    return '<div style="text-align:center;padding:6px 2px;font-size:10px;font-weight:700;color:' + (isToday ? '#00cfff' : '#9a8ab0') + ';border-left:1px solid rgba(0,0,0,0.06);background:#fff;">' +
       d.name + '<br><span style="font-size:13px;font-family:Righteous,sans-serif;">' + d.date + '</span></div>';
   }).join('');
 
-  var rows = blocks.map(function(block) {
+  var rows = blocks.map(function(block, idx) {
     var cells = days.map(function(d) {
       var val = loadSchedCell(block.id, currentMs, d.dow);
       var isToday = isCurrent && d.dow === todayDow;
@@ -2154,8 +2166,12 @@ function buildBlocksGrid() {
     }).join('');
 
     return '<div style="display:contents;">' +
-      '<div style="background:#1a0a2e;padding:6px 8px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #ffffff15;">' +
-        '<span style="font-size:11px;font-weight:700;color:#c4a0ff;letter-spacing:1px;text-transform:uppercase;cursor:pointer;" onclick="renameScheduleBlock(\'' + block.id + '\')">' + block.name + '</span>' +
+      '<div style="background:#1a0a2e;padding:6px 8px;display:flex;align-items:center;gap:6px;border-top:1px solid #ffffff15;">' +
+        '<div style="display:flex;flex-direction:column;gap:1px;">' +
+          '<span onclick="moveScheduleBlock(\'' + block.id + '\',-1)" style="font-size:8px;color:#9a8ab0;cursor:pointer;line-height:1;opacity:' + (idx === 0 ? '0.2' : '0.7') + ';">▲</span>' +
+          '<span onclick="moveScheduleBlock(\'' + block.id + '\',1)" style="font-size:8px;color:#9a8ab0;cursor:pointer;line-height:1;opacity:' + (idx === blocks.length - 1 ? '0.2' : '0.7') + ';">▼</span>' +
+        '</div>' +
+        '<span style="font-size:11px;font-weight:700;color:#c4a0ff;letter-spacing:1px;text-transform:uppercase;cursor:pointer;flex:1;" onclick="renameScheduleBlock(\'' + block.id + '\')">' + block.name + '</span>' +
         '<span onclick="deleteScheduleBlock(\'' + block.id + '\')" style="font-size:10px;color:#9a8ab0;cursor:pointer;opacity:0.6;">✕</span>' +
       '</div>' +
       cells +
@@ -2163,8 +2179,8 @@ function buildBlocksGrid() {
   }).join('');
 
   return '<div style="display:grid;grid-template-columns:100px repeat(7,1fr);background:#fff;">' +
-    '<div style="background:#1a0a2e;padding:6px 8px;"></div>' +
-    headerCols +
+    '<div style="background:#fff;padding:6px 8px;"></div>' +
+    dayHeaders +
     rows +
   '</div>';
 }
@@ -2255,16 +2271,16 @@ function buildScheduleHTML() {
 
   return '<div style="margin:10px auto;border:2px solid #1a0a2e;border-radius:9px;overflow:hidden;box-shadow:2px 2px 0 #1a0a2e;">' +
     '<div style="background:#1a0a2e;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">' +
-      '<span style="font-family:Righteous,sans-serif;font-size:14px;color:#fff;letter-spacing:2px;">🗓️ SCHEDULE</span>' +
+      '<div style="display:flex;align-items:center;gap:8px;">' +
+        '<button onclick="addScheduleBlock()" style="background:#ffffff14;border:1px solid #ffffff33;border-radius:5px;padding:2px 8px;font-size:12px;font-weight:700;color:#c4a0ff;cursor:pointer;font-family:DM Sans,sans-serif;">+</button>' +
+        '<span style="font-family:Righteous,sans-serif;font-size:14px;color:#fff;letter-spacing:2px;">🗓️ SCHEDULE</span>' +
+      '</div>' +
       '<div style="display:flex;align-items:center;gap:6px;">' +
         toggleBtn('Blocks', 'blocks') +
         toggleBtn('Timeline', 'timeline') +
         toggleBtn('Both', 'both') +
       '</div>' +
-      '<div style="display:flex;align-items:center;gap:8px;">' +
-        '<span style="font-size:10px;color:#9a8ab0;">' + subtitle + '</span>' +
-        '<button onclick="addScheduleBlock()" style="background:#ffffff14;border:1px solid #ffffff33;border-radius:5px;padding:2px 8px;font-size:12px;font-weight:700;color:#c4a0ff;cursor:pointer;font-family:DM Sans,sans-serif;">+</button>' +
-      '</div>' +
+      '<span style="font-size:10px;color:#9a8ab0;">' + subtitle + '</span>' +
     '</div>' +
     body +
   '</div>';
