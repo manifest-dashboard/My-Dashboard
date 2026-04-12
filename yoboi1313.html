@@ -2102,15 +2102,24 @@ function buildJournalHTML() {
 
   var leftDays = days.filter(function(d) { return d.dow <= 3; });
   var rightDays = days.filter(function(d) { return d.dow >= 4; });
+  var subtitle = isCurrent ? 'Current Week' : weekLabel(currentMs, todayMs);
 
-  return '<div class="week-split">' +
-    '<div class="week-half">' +
-      '<div class="week-label">SUN — WED</div>' +
-      leftDays.map(buildJournalCard).join('') +
+  return '<div style="margin:10px auto;border:2px solid #1a0a2e;border-radius:9px;overflow:hidden;box-shadow:2px 2px 0 #1a0a2e;">' +
+    '<div style="background:#1a0a2e;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">' +
+      '<span style="font-family:Righteous,sans-serif;font-size:14px;color:#fff;letter-spacing:2px;">📓 JOURNAL</span>' +
+      '<span style="font-size:10px;color:#9a8ab0;">' + subtitle + '</span>' +
     '</div>' +
-    '<div class="week-half">' +
-      '<div class="week-label">THU — SAT</div>' +
-      rightDays.map(buildJournalCard).join('') +
+    '<div style="padding:10px;">' +
+      '<div class="week-split">' +
+        '<div class="week-half">' +
+          '<div class="week-label">SUN — WED</div>' +
+          leftDays.map(buildJournalCard).join('') +
+        '</div>' +
+        '<div class="week-half">' +
+          '<div class="week-label">THU — SAT</div>' +
+          rightDays.map(buildJournalCard).join('') +
+        '</div>' +
+      '</div>' +
     '</div>' +
   '</div>';
 }
