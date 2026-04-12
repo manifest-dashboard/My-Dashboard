@@ -1406,7 +1406,7 @@ function buildCenterApps() {
   if(appState.wotd)     html+=buildWOTDHTML();
   if(appState.wcal && appState.wcalLoc==='dashboard') html+=buildWeeklyCalHTML();
   el.innerHTML=html;
-  el.querySelectorAll('textarea').forEach(function(ta){ if(ta.value) autoGrowJournal(ta); });
+  setTimeout(function(){ el.querySelectorAll('textarea').forEach(function(ta){ if(ta.value) autoGrowJournal(ta); }); }, 0);
   const chip=document.getElementById('brands-chip');
   if(chip) chip.textContent=retainers.length+' BRANDS';
 }
@@ -2030,16 +2030,16 @@ function buildJournalHTML() {
     var isToday = isCurrent && d.dow === todayDow;
     var border = isToday ? '3px solid var(--neon)' : '2px solid var(--dark)';
     var shadow = isToday ? '0 0 0 3px #fff,0 0 0 5px var(--neon)' : '2px 2px 0 var(--dark)';
-    var bg = isToday ? '#f5eed9' : '#f5eed9';
+    var bg = isToday ? '#faf6e8' : '#faf6e8';
     var minH = isToday ? '100px' : '60px';
 
-    return '<div style="border:' + border + ';border-radius:8px;overflow:hidden;box-shadow:' + shadow + ';margin-bottom:5px;background:' + bg + ';">' +
+    return '<div style="border:' + border + ';border-radius:8px;box-shadow:' + shadow + ';margin-bottom:5px;background:' + bg + ';">' +
       '<div style="display:flex;align-items:baseline;gap:4px;padding:7px 8px 4px;border-bottom:1px solid rgba(0,0,0,0.09);">' +
         '<span style="font-size:8px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:' + (isToday ? 'var(--neon)' : '#8a7a5a') + ';' + (isToday ? '' : 'opacity:0.7;') + '">' + d.name + '</span>' +
         '<span style="font-family:Righteous,sans-serif;font-size:22px;line-height:1;color:' + (isToday ? 'var(--dark)' : '#8a7a5a') + ';' + (isToday ? '' : 'opacity:0.7;') + '">' + d.date + '</span>' +
       '</div>' +
       '<div style="padding:7px 8px;">' +
-        '<textarea placeholder="How was your day?" oninput="autoGrowJournal(this);saveJournalEntry(' + di.y + ',' + di.m + ',' + di.day + ',this.value)" style="width:100%;min-height:' + minH + ';border:none;border-radius:4px;padding:6px;font-family:DM Sans,sans-serif;font-size:12px;color:#1a0a2e;outline:none;resize:none;overflow:hidden;line-height:1.5;background:rgba(255,255,255,0.35);">' + t.replace(/</g,'&lt;') + '</textarea>' +
+        '<textarea placeholder="How was your day?" oninput="autoGrowJournal(this);saveJournalEntry(' + di.y + ',' + di.m + ',' + di.day + ',this.value)" style="width:100%;min-height:' + minH + ';height:auto;border:none;border-radius:4px;padding:6px;font-family:DM Sans,sans-serif;font-size:12px;color:#1a0a2e;outline:none;resize:none;overflow:hidden;line-height:1.5;background:rgba(255,255,255,0.3);box-sizing:border-box;display:block;">' + t.replace(/</g,'&lt;') + '</textarea>' +
       '</div>' +
     '</div>';
   }
