@@ -856,6 +856,7 @@ function flip(dir) {
     currentMs = item.ms;
     hidePageView();
     render();
+    buildCenterApps();
   } else {
     currentPageId = item.id;
     currentMs = item.ms;
@@ -867,6 +868,7 @@ function goToday() {
   currentMs = todayMs;
   hidePageView();
   render();
+  buildCenterApps();
 }
 function showPage() {
   var pages = loadPages();
