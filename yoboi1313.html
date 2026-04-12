@@ -2019,7 +2019,7 @@ function buildRetainerEditor(){
         <button onclick="dropRetainer('${r.id}')" style="background:rgba(255,107,157,0.15);border:1px solid #ff6b9d;border-radius:5px;padding:3px 9px;color:#ff6b9d;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;">Drop</button>
       </div>
       ${hidden?'':`<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
-        <div class="ret-field"><label>Emoji</label><input value="${r.emoji}" oninput="retainers[${i}].emoji=this.value;saveRetainers()"></div>
+        <div class="ret-field"><label>Emoji</label><div style="position:relative"><input value="${r.emoji}" readonly onclick="var p=this.nextElementSibling;p.style.display=p.style.display==='grid'?'none':'grid'" style="cursor:pointer;text-align:center;font-size:18px"><div style="display:none;position:absolute;top:100%;left:0;z-index:20;grid-template-columns:repeat(6,1fr);gap:2px;padding:6px;background:#1a0a2e;border:1px solid #ffffff22;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.3);max-height:160px;overflow-y:auto;width:200px">${['🍬','🦷','🌿','💉','📦','🔬','🧠','🚿','🌱','💊','🏋️','🎯','🔥','⭐','💎','🎨','📱','💰','🎬','📸','🛒','✨','🏠','🚀','🎵','📚','🍎','☕','🌊','🌸'].map(e=>'<span onclick="retainers['+i+'].emoji=\''+e+'\';saveRetainers();buildRetainerEditor();buildCenterApps()" style="font-size:20px;text-align:center;cursor:pointer;padding:4px;border-radius:4px" onmouseover="this.style.background=\'#ffffff22\'" onmouseout="this.style.background=\'transparent\'">'+e+'</span>').join('')}</div></div></div>
         <div class="ret-field"><label>Name</label><input value="${r.name}" oninput="retainers[${i}].name=this.value;saveRetainers()"></div>
         <div class="ret-field"><label>Type</label><select onchange="retainers[${i}].type=this.value;saveRetainers()"><option ${r.type==='AI Avatar'?'selected':''}>AI Avatar</option><option ${r.type==='TikTok Shop'?'selected':''}>TikTok Shop</option><option ${r.type==='Other'?'selected':''}>Other</option></select></div>
         <div class="ret-field"><label>Goal</label><input type="number" value="${r.goal}" oninput="retainers[${i}].goal=+this.value||30;saveRetainers()"></div>
@@ -2677,7 +2677,7 @@ function deleteRetTask() {
           </select>
         </div>
         <div>
-          <div style="font-size:10px;color:#9a8ab0;margin-bottom:4px;">Day starts at</div>
+          <div style="font-size:10px;color:#9a8ab0;margin-bottom:4px;">Daycard changes at</div>
           <input type="time" id="setting-day-start" value="00:00" onchange="userSettings.dayStartTime=this.value;saveUserSettings();render();buildCenterApps();" style="background:#ffffff11;border:1px solid #ffffff22;border-radius:5px;padding:6px 9px;font-family:'DM Sans',sans-serif;font-size:12px;color:#fff;outline:none;width:100%">
         </div>
       </div>
