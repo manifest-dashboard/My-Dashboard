@@ -758,10 +758,10 @@ function getWeekData(ms) {
 // Current week (Mar 23–29): in-progress — some done, some not
 // Next week (Mar 30–Apr 5): all fresh, nothing crossed off
 
-function seedIfEmpty(ms, days, weekGoals) {
+function seedIfEmpty(ms, days) {
   const all = loadData();
   if (all[ms]) return;
-  all[ms] = { weekGoals: weekGoals || [], journal:'', days };
+  all[ms] = { weekGoals:[], journal:'', days };
   try { localStorage.setItem('cmd_data', JSON.stringify(all)); } catch(e) {}
 }
 
@@ -795,10 +795,6 @@ seedIfEmpty(lastWeekMs, [
 ]);
 
 // Current week — in progress
-var defaultWeekGoals = [
-  { t: 'Give feedback', done: false, scrapped: false },
-  { t: 'Write something everyday', done: false, scrapped: false }
-];
 seedIfEmpty(todayMs, [
   { dow:0, act:[], stu:[], tsk:[{id:'cw0t0',t:'Rest & plan',done:false}], msc:[{id:'cw0m0',t:'Post Goli',done:false},{id:'cw0m1',t:'Post Dr. Dent',done:false},{id:'cw0m2',t:'Post Serene',done:false},{id:'cw0m3',t:'Post Native Peptides',done:false}] },
   { dow:1, act:[{id:'cw1a0',t:'Groceries run',done:false}], stu:[{id:'cw1s0',t:'Editing tutorial',done:false}], tsk:[{id:'cw1t0',t:'Neurogum scripts',done:false},{id:'cw1t1',t:'Reply emails',done:false}], msc:[{id:'cw1m0',t:'Workout',done:false},{id:'cw1m1',t:'Post Goli',done:false},{id:'cw1m2',t:'Post Dr. Dent',done:false},{id:'cw1m3',t:'Post Serene',done:false},{id:'cw1m4',t:'Post Native Peptides',done:false}] },
@@ -807,7 +803,7 @@ seedIfEmpty(todayMs, [
   { dow:4, act:[{id:'cw4a0',t:'Brand meeting',done:false,imp:true}], stu:[], tsk:[], msc:[{id:'cw4m0',t:'Post Goli',done:false},{id:'cw4m1',t:'Post Dr. Dent',done:false},{id:'cw4m2',t:'Post Serene',done:false},{id:'cw4m3',t:'Post Native Peptides',done:false}] },
   { dow:5, act:[{id:'cw5a0',t:'Brand meeting',done:false,imp:true}], stu:[], tsk:[], msc:[{id:'cw5m0',t:'Post Goli',done:false},{id:'cw5m1',t:'Post Dr. Dent',done:false},{id:'cw5m2',t:'Post Serene',done:false},{id:'cw5m3',t:'Post Native Peptides',done:false}] },
   { dow:6, act:[{id:'cw6a0',t:'Sat 3pm shift',done:false,imp:true},{id:'cw6a1',t:'Saturday planning',done:false,imp:true}], stu:[{id:'cw6s0',t:'Research new angles',done:false}], tsk:[{id:'cw6t0',t:'Claude check-in',done:false,imp:true},{id:'cw6t1',t:'Set next week goals',done:false},{id:'cw6t2',t:'Reply brand emails',done:false}], msc:[{id:'cw6m0',t:'Post Goli',done:false},{id:'cw6m1',t:'Post Dr. Dent',done:false},{id:'cw6m2',t:'Post Serene',done:false},{id:'cw6m3',t:'Post Native Peptides',done:false}] },
-], defaultWeekGoals);
+]);
 
 // Next week (Mar 30 – Apr 5) — all fresh, nothing done
 seedIfEmpty(nextWeekMs, [
@@ -819,6 +815,20 @@ seedIfEmpty(nextWeekMs, [
   { dow:5, act:[{id:'nw5a0',t:'Brand meeting',done:false,imp:true}], stu:[], tsk:[], msc:[{id:'nw5m0',t:'Post Goli',done:false},{id:'nw5m1',t:'Post Dr. Dent',done:false},{id:'nw5m2',t:'Post Serene',done:false},{id:'nw5m3',t:'Post Native Peptides',done:false}] },
   { dow:6, act:[{id:'nw6a0',t:'Sat 3pm shift',done:false,imp:true},{id:'nw6a1',t:'Saturday planning',done:false,imp:true}], stu:[{id:'nw6s0',t:'Next week prep',done:false}], tsk:[{id:'nw6t0',t:'Claude check-in',done:false,imp:true},{id:'nw6t1',t:'April goals review',done:false}], msc:[{id:'nw6m0',t:'Post Goli',done:false},{id:'nw6m1',t:'Post Dr. Dent',done:false},{id:'nw6m2',t:'Post Serene',done:false},{id:'nw6m3',t:'Post Native Peptides',done:false}] },
 ]);
+
+// ── FIRST VISIT DEFAULT GOALS ──
+if (!localStorage.getItem('cmd_first_visit')) {
+  var all = loadData();
+  if (!all[todayMs]) all[todayMs] = { weekGoals:[], journal:'', days: Array.from({length:7}, (_,i) => ({dow:i, act:[], stu:[], tsk:[], msc:[]})) };
+  if (!all[todayMs].weekGoals || !all[todayMs].weekGoals.length) {
+    all[todayMs].weekGoals = [
+      { t: 'Give feedback', done: false, scrapped: false },
+      { t: 'Write something everyday', done: false, scrapped: false }
+    ];
+    try { localStorage.setItem('cmd_data', JSON.stringify(all)); } catch(e) {}
+  }
+  localStorage.setItem('cmd_first_visit', '1');
+}
 
 // ── NAVIGATION ──
 // ── PAGES ──
@@ -1044,6 +1054,10 @@ function addTask(dow, sec, text) {
   all[currentMs].days[dow][sec].push({ id, t: text, done: false });
   try { localStorage.setItem('cmd_data', JSON.stringify(all)); } catch(e) {}
   render();
+  setTimeout(function() {
+    var inp = document.querySelector('.add-task-input[data-dow="'+dow+'"][data-sec="'+sec+'"]');
+    if (inp) { inp.classList.add('visible'); inp.focus(); }
+  }, 0);
 }
 
 function deleteTask(dow, sec, id) {
@@ -1342,8 +1356,8 @@ function buildDayRow(d, weekData, todayDow) {
       <div class="add-task-row">
         <button class="add-task-btn" title="Add task"
           onclick="this.nextElementSibling.classList.toggle('visible');if(this.nextElementSibling.classList.contains('visible'))this.nextElementSibling.focus()">+</button>
-        <input class="add-task-input" placeholder="Add task..."
-          onkeydown="if(event.key==='Enter'&&this.value.trim()){addTask(${d.dow},'${secKey}',this.value.trim());this.value='';this.classList.remove('visible');}if(event.key==='Escape'){this.value='';this.classList.remove('visible');}"
+        <input class="add-task-input" data-dow="${d.dow}" data-sec="${secKey}" placeholder="Add task..."
+          onkeydown="if(event.key==='Enter'&&this.value.trim()){addTask(${d.dow},'${secKey}',this.value.trim());this.value='';}if(event.key==='Escape'){this.value='';this.classList.remove('visible');}"
           onblur="setTimeout(()=>{this.value='';this.classList.remove('visible');},150)">
       </div>
     </div>`;
@@ -1497,8 +1511,8 @@ function buildTodayOverview() {
           </div>`).join('') : '<div class="eh">—</div>'}
         <div class="to-add-row">
           <button class="to-add-btn" onclick="this.nextElementSibling.classList.toggle('visible');if(this.nextElementSibling.classList.contains('visible'))this.nextElementSibling.focus()">+</button>
-          <input class="to-add-input" placeholder="Add task..."
-            onkeydown="if(event.key==='Enter'&&this.value.trim()){addTask(${todayDow},'${col.key}',this.value.trim());this.value='';this.classList.remove('visible');}if(event.key==='Escape'){this.value='';this.classList.remove('visible');}"
+          <input class="to-add-input add-task-input" data-dow="${todayDow}" data-sec="${col.key}" placeholder="Add task..."
+            onkeydown="if(event.key==='Enter'&&this.value.trim()){addTask(${todayDow},'${col.key}',this.value.trim());this.value='';}if(event.key==='Escape'){this.value='';this.classList.remove('visible');}"
             onblur="setTimeout(()=>{this.value='';this.classList.remove('visible');},150)">
         </div>
       </div>`).join('')}
@@ -1517,7 +1531,7 @@ function addFutMG(y, m) {
   var inp = document.getElementById('fut-mg-inp');
   var txt = inp.value.trim(); if (!txt) return;
   addMGToMonth(y, m, txt);
-  inp.value = '';
+  inp.value = ''; inp.focus();
   buildTodayOverview();
 }
 
@@ -1727,7 +1741,7 @@ function addMG(){
   var inp=document.getElementById('mg-inp'); var txt=inp.value.trim(); if(!txt) return;
   var n=new Date();
   addMGToMonth(n.getFullYear(), n.getMonth(), txt);
-  inp.value='';
+  inp.value=''; inp.focus();
   buildSidebarMG();
   buildMGModal();
 }
@@ -1735,7 +1749,7 @@ function addMGFromSidebar(){
   var inp=document.getElementById('mg-inp-rs'); var txt=inp.value.trim(); if(!txt) return;
   var n=new Date();
   addMGToMonth(n.getFullYear(), n.getMonth(), txt);
-  inp.value='';
+  inp.value=''; inp.focus();
   buildSidebarMG();
 }
 function buildMGModal(){
@@ -1793,7 +1807,7 @@ function mgDrop(e, targetIdx) {
 
 // ── YEARLY ──
 function cycleYearly(el){ const chk=el.querySelector('.y-chk'); if(!chk) return; const s=['','done-this','scrapped']; const cur=s.find(x=>x&&chk.classList.contains(x))||''; const nx=s[(s.indexOf(cur)+1)%s.length]; chk.classList.remove('done-this','scrapped'); if(nx) chk.classList.add(nx); }
-function addYI(){ const inp=document.getElementById('yi-inp'); const txt=inp.value.trim(); if(!txt) return; const r=document.createElement('div'); r.className='y-row'; r.onclick=function(){cycleYearly(this);}; r.innerHTML=`<div class="y-chk"></div><span>${txt}</span>`; document.getElementById('yearly-list').appendChild(r); inp.value=''; }
+function addYI(){ const inp=document.getElementById('yi-inp'); const txt=inp.value.trim(); if(!txt) return; const r=document.createElement('div'); r.className='y-row'; r.onclick=function(){cycleYearly(this);}; r.innerHTML=`<div class="y-chk"></div><span>${txt}</span>`; document.getElementById('yearly-list').appendChild(r); inp.value=''; inp.focus(); }
 
 // ── ITEMS ──
 function cycleItem(i) {
@@ -1837,7 +1851,7 @@ function addItem() {
   var items = loadItems();
   items.push({ t: txt, done: false, scrapped: false });
   saveItems(items);
-  inp.value = '';
+  inp.value = ''; inp.focus();
   buildItemList();
 }
 function loadItems() {
@@ -2104,8 +2118,8 @@ function buildRetainerHTML(){
         <div class="ret-tasks" id="ret-tasks-${r.id}">${taskHtml}</div>
         <div style="display:flex;align-items:center;gap:4px;margin-top:5px;">
           <button class="add-task-btn" onclick="this.parentElement.querySelector('.add-task-input').classList.toggle('visible');if(this.parentElement.querySelector('.add-task-input').classList.contains('visible'))this.parentElement.querySelector('.add-task-input').focus()" title="Add task">+</button>
-          <input class="add-task-input" placeholder="Add task..."
-            onkeydown="if(event.key==='Enter'&&this.value.trim()){addRetTask('${r.id}',this.value.trim());this.value='';this.classList.remove('visible');}if(event.key==='Escape'){this.value='';this.classList.remove('visible');}"
+          <input class="add-task-input ret-task-input" data-ret="${r.id}" placeholder="Add task..."
+            onkeydown="if(event.key==='Enter'&&this.value.trim()){addRetTask('${r.id}',this.value.trim());this.value='';}if(event.key==='Escape'){this.value='';this.classList.remove('visible');}"
             onblur="setTimeout(()=>{this.value='';this.classList.remove('visible');},150)">
           <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
             <div style="display:flex;align-items:center;gap:3px;cursor:pointer;" onclick="promptRCount('${r.id}','posts')">
@@ -2621,6 +2635,10 @@ function addRetTask(id, text) {
   if(!r.tasks) r.tasks=[];
   r.tasks.push({t:text, done:false, scrapped:false});
   saveRetainers(); buildCenterApps();
+  setTimeout(function() {
+    var inp = document.querySelector('.ret-task-input[data-ret="'+id+'"]');
+    if (inp) { inp.classList.add('visible'); inp.focus(); }
+  }, 0);
 }
 function cycleRetTask(id, ti) {
   const r = retainers.find(x=>x.id===id); if(!r||!r.tasks) return;
